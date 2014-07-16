@@ -3,7 +3,7 @@
 function SearchView(){
 	$el = $('body');
 	var chosen = {};
-
+	var displays = new Displays()
 	var events = {
 		'input keyup':'keyup',
 		'input keydown': 'keydown',
@@ -14,14 +14,14 @@ function SearchView(){
 		var html = div({id:'search'},
 		
 			input({type:'text'}),
-			p({id:'description'},'Search friends, tags and dates'),
+			p({id:'description'},'Search friends, tags, dates and events'),
 			div({id:'results'})
 		)
 		
 		$el.html(html);
 		$results = $el.find('#results')
 		$description = $el.find('#description')
-
+		$input = $el.find('input')
 		bindEvents();
 	}
 
@@ -37,15 +37,14 @@ function SearchView(){
 	}
 
 	function suggestions(query){
-		var suggested = searchModel.suggest(query);
-
+		var suggested = searchModel.suggest(query,chosen);
 		var html = _(suggested).map(function(matches,type){
 			return [
 				p(type),
 				ul(
 					_(matches).map(function(match){
-						return li({group:type},match)
-					})
+						return li({group:type, val: match},displays[type](match));
+					}).join('')
 				)
 			].join('')
 		});
@@ -87,8 +86,9 @@ function SearchView(){
 			var $target = $(e.target);
 			if ($target.is('li')){
 				var group = $target.attr('group');
-				var val = $target.text();
-				
+				var display = $target.text();
+				var val = $target.attr('val');
+				$input.val('')
 				choose(group,val);
 			}
 		}

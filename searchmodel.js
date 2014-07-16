@@ -3,6 +3,7 @@ function Filters(){
 	var filters = {
 		tags: ['mountains','beach','sunny','cold','happy'],
 		people: ['Zak Dawson','Henry Dawson','James Forbes'],
+		events: ['Christmas Day','New Years Day']
 	}
 
 	function compare(input,compare){
@@ -11,19 +12,42 @@ function Filters(){
 	}
 
 	function matchDates(query){
-		
+		filter = new DateFilter()
+		return filter.format(query);
 	}
 
-	function matchDate(query){
-
+	function dateRange(dates){
+		if(dates.length > 1){
+			return _(dates).min() +'-'+_(dates).max()
+		}
 	}
 
-	function dateRanges(dates){
+	function groupDates(grouped,query,chosen){
+		if(!chosen.ranges){
+			var dates = matchDates(query);
+			var ranges;
 
+			if(dates.length > 0){
+				if(chosen && chosen.dates){
+					dates = dates.concat(chosen.dates)
+				}
+				grouped.dates = dates;
+				var range = dateRange(dates);
+				range && (ranges = [range]);
+
+			}
+			if(ranges){
+				grouped.ranges = ranges;
+			}
+		}
+		if(grouped.ranges){
+			delete chosen.dates;
+			delete grouped.dates;
+		}
 	}
 
 	//returns all the matching values, grouped by result type based on a query
-	function grouped(query){
+	function grouped(query,chosen){
 		var grouped = {};
 		_(filters).map(function(values,filterType){
 
@@ -35,16 +59,8 @@ function Filters(){
 			}
 		})
 
-		var dates = matchDates(query);
-		var ranges = dateRanges(dates);
 
-		if(dates){
-			grouped.dates = dates;
-		}
-		if(ranges){
-			grouped.ranges = ranges;
-		}
-
+		groupDates(grouped,query,chosen)
 		return grouped;
 	}
 
@@ -57,16 +73,21 @@ function Filters(){
 function SearchModel() { 
 
 	var filters = new Filters()
+	var displays = new Displays();
+
 	var intros = {
 		people: 'of',
 		tags: 'tagged',
+		dates: 'taken on',
+		ranges: 'taken between',
+		events: 'taken during',
 	}
 	var each = {
 		tags: '#',
 	}
 
-	function suggest(query){
-		return filters.grouped(query);
+	function suggest(query,chosen){
+		return filters.grouped(query,chosen);
 	}
 
 	function toURL(chosen){
@@ -92,7 +113,10 @@ function SearchModel() {
 
 	function describe(chosen){
 		var descriptions = _(chosen).map(function(choices,type){
-			choices = _(choices).map(function(choice){ return [each[type]] + choice })
+			choices = _(choices).map(function(choice){
+				return [each[type]] + displays[type](choice);
+			})
+
 			return ' '+intros[type]+' '+ describeList(choices)
 		})
 		return 'Photos'+descriptions;

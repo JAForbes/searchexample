@@ -46,12 +46,12 @@ function DateFilter(){
 	*/
 	function getDayOfWeek(dayIndex){
 		var today = new Date();
-		var dayIndex = 7;
 		var delta = today.getDay() - dayIndex;
 		if(delta < 0){
 		  delta += 7;
 		}
-		return new Date(today.setDate(today.getDate() - delta));
+		today.setDate(today.getDate() - delta)
+		return today;
 	}
 
 	function month(query,match){
@@ -71,43 +71,31 @@ function DateFilter(){
 	}
 
 	function iso8601(query,match){
-		return keywordHash(query,new Date(match[0]).getTime());
+		return new Date(match[0]).getTime();
 	}
 
 	function pretty(query,match){
 		var year = match.slice(-1)[0] || new Date().getFullYear();
 		var month = shortMonths.indexOf(match.slice(-2)[0]);
 		var day = match.slice(-3)[0];
-		return keywordHash(query,new Date(year,month,day).getTime());
+		return new Date(year,month,day).getTime();
 	}
 
 	function shortPretty(query,match){
 		var year = match.slice(-1)[0];
 		var month = shortMonths.indexOf(match.slice(-3)[0]);
 		var day = match.slice(-2)[0];
-		return keywordHash(query,new Date(year,month,day).getTime());
+		return new Date(year,month,day).getTime();
 	}
 
 	function today(query,match){
-		return keywordHash(query,new Date().getTime());
+		return query,new Date().getTime();
 	}
 
 	function yesterday(query,match){
 		var date = getNormalizedDate();
 		date.setTime(date.getTime() - DAY_AS_MILLIS);
-		return keywordHash(query,date.getTime());
-	}
-
-	function intro(value,display){
-		var on = value.file_created && new Date(value.file_created);
-		var end = value.before && new Date(value.before);
-		var start = value.after && new Date(value.after);
-		
-		if(end && start){
-			return DateDescriber.describe(start,end).intro;
-		} else {
-			return DateDescriber.describe(on||start||end).intro;
-		}
+		return date.getTime();
 	}
 
 	//convert a string to a date
