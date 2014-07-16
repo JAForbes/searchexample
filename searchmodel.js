@@ -12,7 +12,7 @@ function Filters(){
 	}
 
 	function matchDates(query){
-		filter = new DateFilter()
+		var filter = new DateFilter()
 		return filter.format(query);
 	}
 
