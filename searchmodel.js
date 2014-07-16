@@ -1,10 +1,62 @@
-filters = {
-	tags: ['mountains','beach','sunny','cold','happy'],
-	people: ['Zak Dawson','Henry Dawson','James Forbes'],
+function Filters(){
+
+	var filters = {
+		tags: ['mountains','beach','sunny','cold','happy'],
+		people: ['Zak Dawson','Henry Dawson','James Forbes'],
+	}
+
+	function compare(input,compare){
+		//use whatever regex or comparison etc just return boolean
+		return input.toLowerCase()[0] == compare.toLowerCase()[0]
+	}
+
+	function matchDates(query){
+		
+	}
+
+	function matchDate(query){
+
+	}
+
+	function dateRanges(dates){
+
+	}
+
+	//returns all the matching values, grouped by result type based on a query
+	function grouped(query){
+		var grouped = {};
+		_(filters).map(function(values,filterType){
+
+			var similar = _(values).filter(function(value){
+				return compare(value,query)
+			});
+			if(similar.length > 0){
+				grouped[filterType] = similar;
+			}
+		})
+
+		var dates = matchDates(query);
+		var ranges = dateRanges(dates);
+
+		if(dates){
+			grouped.dates = dates;
+		}
+		if(ranges){
+			grouped.ranges = ranges;
+		}
+
+		return grouped;
+	}
+
+	return {
+		grouped: grouped
+	}
 }
+
 
 function SearchModel() { 
 
+	var filters = new Filters()
 	var intros = {
 		people: 'of',
 		tags: 'tagged',
@@ -13,22 +65,8 @@ function SearchModel() {
 		tags: '#',
 	}
 
-	function compare(input,compare){
-		//use whatever regex or comparison etc just return boolean
-		return input.toLowerCase()[0] == compare.toLowerCase()[0]
-	}
-
 	function suggest(query){
-		var grouped = {};
-		_(filters).map(function(values,filterType){
-			var similar = _(values).filter(function(value){
-				return compare(value,query)
-			});
-			if(similar.length > 0){
-				grouped[filterType] = similar;
-			}
-		})
-		return grouped;
+		return filters.grouped(query);
 	}
 
 	function toURL(chosen){

@@ -3,7 +3,7 @@
 function SearchView(){
 	$el = $('body');
 	var chosen = {};
-	
+
 	var events = {
 		'input keyup':'keyup',
 		'input keydown': 'keydown',
