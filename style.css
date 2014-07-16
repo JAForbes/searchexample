@@ -1,0 +1,29 @@
+*{
+	font-family: helvetica;
+}
+#search {
+	width:80%;
+	margin-left:10%;
+	font-size: 1.3em;
+}
+#search input {
+	height:2em;
+	line-height: 1em;
+	width:100%;
+}
+#search #description {
+	margin: 0.5em;
+}
+#results {
+	background-colour:blue;
+}
+.type{}
+ul{
+	list-style: none;
+	margin: 0;
+	padding:0;
+}
+li {
+  height: 1.5em;
+  margin: 0.5em;
+}
