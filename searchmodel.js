@@ -5,6 +5,14 @@ filters = {
 
 function SearchModel() { 
 
+	var intros = {
+		people: 'of',
+		tags: 'tagged',
+	}
+	var each = {
+		tags: '#',
+	}
+
 	function compare(input,compare){
 		//use whatever regex or comparison etc just return boolean
 		return input.toLowerCase()[0] == compare.toLowerCase()[0]
@@ -24,7 +32,7 @@ function SearchModel() {
 	}
 
 	function toURL(chosen){
-		return '#'+_(chosen).map(function(values,type){
+		return _(chosen).map(function(values,type){
 			return type+'/' + values.join('+').replace(/\s/g,'_');
 		}).join('/');
 	}
@@ -44,9 +52,40 @@ function SearchModel() {
 		return chosen;
 	}
 
+	function describe(chosen){
+		var descriptions = _(chosen).map(function(choices,type){
+			choices = _(choices).map(function(choice){ return [each[type]] + choice })
+			return ' '+intros[type]+' '+ describeList(choices)
+		})
+		return 'Photos'+descriptions;
+	}
+
+	/*
+		Converts a list of n elements into the following forms
+		A
+		A and B
+		A, B and C
+		A, B, C, ... and D
+	*/
+	function describeList(list){
+
+		A = list.slice(0,1)
+		B = list.slice(1,-1)
+		C = list.slice(-1)
+
+		var and;
+		var commas;
+		if(A[0] != C[0]) { and = ' and ' }
+		if(B.length > 0) {commas = A.concat(B).join(', ') }
+
+		str = [commas || A]+[and && and + C]
+		return str;
+	}
+
 	return {
 		suggest: suggest,
 		toURL: toURL,
 		fromURL: fromURL,
+		describe: describe,
 	}
 }

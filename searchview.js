@@ -6,6 +6,7 @@ function SearchView(){
 	
 	var events = {
 		'input keyup':'keyup',
+		'input keydown': 'keydown',
 		'#results click':'resultsClick'
 	}
 
@@ -19,6 +20,7 @@ function SearchView(){
 		
 		$el.html(html);
 		$results = $el.find('#results')
+		$description = $el.find('#description')
 
 		bindEvents();
 	}
@@ -54,7 +56,17 @@ function SearchView(){
 	function choose(group,val){
 		chosen[group] = chosen[group] || [];
 		chosen[group].push(val);
-		console.log(searchModel.toURL(chosen))
+
+		describe(chosen);
+	}
+
+	function describe(chosen){
+		var desc = searchModel.describe(chosen);
+		$description.text(desc);
+	}
+
+	function navigate(){
+		window.location.hash = '/' + searchModel.toURL(chosen);
 	}
 
 	on = {
@@ -64,11 +76,19 @@ function SearchView(){
 			suggestions(val);
 		},
 
+		keydown: function(e){
+			var ENTER = 13;
+			if (e.keyCode == ENTER) {
+				navigate();
+			}
+		},
+
 		resultsClick: function(e){
 			var $target = $(e.target);
 			if ($target.is('li')){
 				var group = $target.attr('group');
 				var val = $target.text();
+				
 				choose(group,val);
 			}
 		}
