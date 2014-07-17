@@ -30,7 +30,7 @@ function Filters(){
 			if(dates.length > 0){
 				if(chosen && chosen.dates){
 					dates = dates.concat(chosen.dates)
-				}
+			}
 				grouped.dates = dates;
 				var range = dateRange(dates);
 				range && (ranges = [range]);

@@ -17,6 +17,7 @@ function DateFilter(){
 		today: /to/,
 		yesterday: /yest/,
 		month: /(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/,
+		christmas: /chris/,
 	};
 
 	var formatters = {
@@ -27,7 +28,8 @@ function DateFilter(){
 		day: day,
 		today: today,
 		yesterday: yesterday,
-		month: month
+		month: month,
+		christmas: christmas,
 	}
 
 	var	shortMonths = months.map(function(val){ return val.slice(0,3).toLowerCase(); });
@@ -38,6 +40,11 @@ function DateFilter(){
 		var day = shortDays.indexOf(match[0]);
 		var date = getDayOfWeek(day);
 		return date.getTime();
+	}
+
+	function christmas(query,match){
+		console.log('christmas')
+		return new Date('2014-12-25').getTime()
 	}
 
 	/*
